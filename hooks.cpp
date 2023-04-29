@@ -1,4 +1,4 @@
-#include <minhook/minhook.h>
+#include <minhook.h>
 
 #include "hooks.h"
 
