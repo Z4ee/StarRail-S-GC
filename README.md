@@ -18,5 +18,6 @@ Now you can use speedhack
 
 if it does not work for the Chinese version of the game, then create github issue
 
-# Cheat engine version:
-[["GameAssembly.dll" + 0x8CAA6A0]+ 0xC0] + 0x1DC
+# cheat engine:
+address -> [["GameAssembly.dll" + 0x8CAA6A0]+ 0xC0] + 0x1DC
+type -> float
