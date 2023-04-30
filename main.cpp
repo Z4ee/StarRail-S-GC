@@ -2,7 +2,6 @@
 
 #include "main.h"
 
-
 BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
 	if (fdwReason == DLL_PROCESS_ATTACH) {
@@ -14,9 +13,15 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
 		AllocConsole();
 
-		FILE* file = freopen("CONOUT$", "w", stdout);
+		FILE* file_out;
+		FILE* file_in;
 
-		CreateThread(0, 0, hooks::init, 0, 0, 0);
+		errno_t err_out = freopen_s(&file_out, "CONOUT$", "w", stdout);
+		errno_t err_in = freopen_s(&file_in, "CONIN$", "r", stdin);
+
+		if (err_out == 0 || err_in == 0) {
+			CreateThread(0, 0, hooks::init, 0, 0, 0);
+		}
 	}
 
 	return TRUE;

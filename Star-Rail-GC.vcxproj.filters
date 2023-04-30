@@ -13,6 +13,9 @@
     <ClCompile Include="hooks.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -22,6 +25,9 @@
       <Filter>Исходные файлы</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>
