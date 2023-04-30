@@ -9,7 +9,7 @@ After compilation, you will receive a dll that you need to inject into the game 
 
 You can use Extreme Injector (auto inject) to inject the dll into the game at startup
 
-Now you can use your infinite skill points
+Now you can use speedhack
 
 # Functional:
-- infinite skill points
+- speedhack (KEY: F5)
