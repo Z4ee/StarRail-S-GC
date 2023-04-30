@@ -15,3 +15,5 @@ Now you can use speedhack
 - speedhack (KEY: F5) (works in dialogues and battles)
 
 ![image](https://user-images.githubusercontent.com/113752393/235335594-638626bf-b598-4c60-ab05-852968dfe0a3.png)
+
+if it does not work for the Chinese version of the game, then create github issue
