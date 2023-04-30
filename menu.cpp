@@ -10,7 +10,7 @@ namespace menu {
 
 	static float speed = 1.f;
 
-	__int64 game_assembly = 0;
+	uint64_t game_assembly = 0;
 
 	void set_speed(float speed) {
 
