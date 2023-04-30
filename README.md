@@ -17,3 +17,6 @@ Now you can use speedhack
 ![image](https://user-images.githubusercontent.com/113752393/235335594-638626bf-b598-4c60-ab05-852968dfe0a3.png)
 
 if it does not work for the Chinese version of the game, then create github issue
+
+# Cheat engine version:
+[["GameAssembly.dll" + 0x8CAA6A0]+ 0xC0] + 0x1DC
