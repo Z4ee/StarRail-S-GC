@@ -20,9 +20,13 @@ if it does not work for the Chinese version of the game, then create github issu
 
 # cheat engine:
 BATTLE SPEED:
+
 address: [["GameAssembly.dll" + 0x8CAA6A0]+ 0xC0] + 0x1DC
+
 type: float
 
 GLOBAL SPEED: (thx @Gktwo)
+
 address: [unityplayer.dll + 0x1D21D78] + 0xFC
+
 type: float
