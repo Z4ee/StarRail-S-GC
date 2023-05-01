@@ -76,6 +76,12 @@ namespace hooks {
 
 		while (!base_address) base_address = reinterpret_cast<uintptr_t>(GetModuleHandleA("gameassembly.dll"));
 
+		// mega deadcode
+
+		if (utils::read<uint8_t>(base_address + v_hooks[0].rva) != 0x48) {
+			v_hooks[0].rva = 0x5B9DFD0;
+		}
+
 		puts("hooks setup..");
 
 		for (auto& hook : v_hooks) {
