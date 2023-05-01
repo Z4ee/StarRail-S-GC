@@ -34,7 +34,16 @@ namespace menu {
 		}
 	}
 
-	DWORD speedhack_thread(void* lpThreadParameter) {
+	void mega_beep(bool is) {
+		if (is) {
+			Beep(800, 500);
+		}
+		else {
+			Beep(600, 500);
+		}
+	}
+
+	void cheat_thread() {
 
 		while (!game_assembly) game_assembly = reinterpret_cast<uint64_t>(GetModuleHandleA("gameassembly.dll"));
 		while (!unity_player) unity_player = reinterpret_cast<uint64_t>(GetModuleHandleA("unityplayer.dll"));
@@ -42,10 +51,17 @@ namespace menu {
 		do
 		{
 			static bool speedhack = 0;
-			static bool auto_attack = 0;
+			static bool peeking = 0;
 
 			if (GetAsyncKeyState(VK_CAPITAL) && 1) {
 				speedhack = !speedhack;
+
+				mega_beep(speedhack);
+			}
+			else if (GetAsyncKeyState(VK_F5) && 1) {
+				peeking = !peeking;
+
+				mega_beep(peeking);
 			}
 
 			if (speedhack) {
@@ -53,6 +69,13 @@ namespace menu {
 			}
 			else {
 				set_speed(1.f);
+			}
+
+			if (peeking) {
+				utils::write<uint8_t>(game_assembly + 0x51292C0, 0xC3);
+			}
+			else {
+				utils::write<uint8_t>(game_assembly + 0x51292C0, 0x40);
 			}
 
 			Sleep(500);
@@ -64,7 +87,10 @@ namespace menu {
 
 		Sleep(15000);
 
-		CreateThread(0, 0, speedhack_thread, 0, 0, 0);
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)cheat_thread, 0, 0, 0);
+
+		puts("enable speedhack | hotkey: CAPSLOCK");
+		puts("enable peeking (: | hotkey: F5");
 
 		while (true)
 		{
