@@ -12,7 +12,7 @@ You can use Extreme Injector (auto inject) to inject the dll into the game at st
 Now you can use speedhack
 
 # Functional:
-- speedhack (Button: CAPSLOCK) (works everywhere)
+- speedhack (hotkey: CAPSLOCK) (works everywhere)
 
 ![image](https://user-images.githubusercontent.com/113752393/235335594-638626bf-b598-4c60-ab05-852968dfe0a3.png)
 
