@@ -12,7 +12,7 @@ You can use Extreme Injector (auto inject) to inject the dll into the game at st
 Now you can use speedhack
 
 # Functional:
-- speedhack (hotkey: CAPSLOCK) (works everywhere) in battle you can use at least 999 speed
+- speedhack (hotkey: CAPSLOCK) (works everywhere)
 - peeking (hotkey: F5)
 - fps unlock (hotkey: F6)
 
