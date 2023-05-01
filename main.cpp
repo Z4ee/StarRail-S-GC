@@ -8,6 +8,7 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
 		utils::write<uint32_t>(base_address + 0xFCDC0, 0xCCC3C031);
 		utils::write<uint8_t>(base_address + 0xF9940, 0xC3);
+		utils::write<uint16_t>(base_address + 0x1BCBA0, 0xFEEB);
 
 		AllocConsole();
 
@@ -18,7 +19,7 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 		errno_t err_in = freopen_s(&file_in, "CONIN$", "r", stdin);
 
 		if (err_out == 0 || err_in == 0) {
-			CreateThread(0, 0, hooks::init, 0, 0, 0);
+			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)hooks::init, 0, 0, 0);
 		}
 	}
 

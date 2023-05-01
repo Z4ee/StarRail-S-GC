@@ -6,47 +6,57 @@
 
 #include "utils.h"
 
+#include "game.h"
+
 namespace menu {
 
 	static float speed = 1.f;
 
-	uint64_t game_assembly = 0;
+	__int64 game_assembly = 0;
+	__int64 unity_player = 0;
+
+	void set_speed_global(float speed) {
+		utils::write<float>(utils::read<__int64>(unity_player + 0x1D21D78) + 0xFC, speed);
+	}
+
+	void set_speed_battle(float speed) {
+		utils::write<float>(utils::read<__int64>(utils::read<__int64>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, speed);
+	}
 
 	void set_speed(float speed) {
-
-		if (game_assembly) {
-			utils::write<float>(utils::read<__int64>(utils::read<__int64>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, speed);
+		if (hooks::game::get_currect_phase() == RPG_BATTLE) {
+			set_speed_battle(speed);
+			set_speed_global(1.f);
 		}
 		else {
-			printf("Failed to find GameAssembly.dll");
+			set_speed_global(speed);
+			set_speed_battle(1.f);
 		}
-		/* [["GameAssembly.dll" + 0x8CAA6A0]+ 0xC0] + 0x1DC */
 	}
 
 	DWORD speedhack_thread(void* lpThreadParameter) {
 
-		while (!game_assembly) game_assembly = reinterpret_cast<uint64_t>(GetModuleHandleA("GameAssembly.dll"));
-		
+		while (!game_assembly) game_assembly = reinterpret_cast<uint64_t>(GetModuleHandleA("gameassembly.dll"));
+		while (!unity_player) unity_player = reinterpret_cast<uint64_t>(GetModuleHandleA("unityplayer.dll"));
+
 		do
 		{
 			static bool speedhack = 0;
+			static bool auto_attack = 0;
 
 			if (GetAsyncKeyState(VK_CAPITAL) && 1) {
 				speedhack = !speedhack;
-
-				if (speedhack) {
-					Beep(800, 500);
-					set_speed(speed);
-				}
-				else {
-					Beep(600, 500);
-					set_speed(1.f);
-				}
 			}
 
+			if (speedhack) {
+				set_speed(speed);
+			}
+			else {
+				set_speed(1.f);
+			}
 
+			Sleep(500);
 
-			Sleep(100);
 		} while (true);
 	}
 
