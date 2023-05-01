@@ -52,6 +52,7 @@ namespace menu {
 		{
 			static bool speedhack = 0;
 			static bool peeking = 0;
+			static bool fps_unlock = 0;
 
 			if (GetAsyncKeyState(VK_CAPITAL) && 1) {
 				speedhack = !speedhack;
@@ -62,6 +63,11 @@ namespace menu {
 				peeking = !peeking;
 
 				mega_beep(peeking);
+			}
+			else if (GetAsyncKeyState(VK_F6) && 1) {
+				fps_unlock = !fps_unlock;
+
+				mega_beep(fps_unlock);
 			}
 
 			if (speedhack) {
@@ -78,6 +84,13 @@ namespace menu {
 				utils::write<uint8_t>(game_assembly + 0x51292C0, 0x40);
 			}
 
+			if (fps_unlock) {
+				utils::write<uint8_t>(unity_player + 0x1C4E000, 540);
+			}
+			else {
+				utils::write<uint8_t>(unity_player + 0x1C4E000, 60);
+			}
+
 			Sleep(500);
 
 		} while (true);
@@ -91,6 +104,7 @@ namespace menu {
 
 		puts("enable speedhack | hotkey: CAPSLOCK");
 		puts("enable peeking (: | hotkey: F5");
+		puts("enable fps unlock | hotkey: F6");
 
 		while (true)
 		{
