@@ -91,10 +91,10 @@ namespace menu {
 			}
 
 			if (fps_unlock) {
-				utils::write<uint8_t>(unity_player + 0x1C4E000, 540);
+				utils::write<uint32_t>(unity_player + 0x1C4E000, 540);
 			}
 			else {
-				utils::write<uint8_t>(unity_player + 0x1C4E000, 60);
+				utils::write<uint32_t>(unity_player + 0x1C4E000, 60);
 			}
 
 			Sleep(500);
