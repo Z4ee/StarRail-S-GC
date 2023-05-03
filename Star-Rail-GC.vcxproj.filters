@@ -16,6 +16,9 @@
     <ClCompile Include="menu.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="globals.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -34,6 +37,9 @@
       <Filter>Исходные файлы</Filter>
     </ClInclude>
     <ClInclude Include="typedef.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

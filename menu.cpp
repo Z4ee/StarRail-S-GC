@@ -8,6 +8,10 @@
 
 #include "game.h"
 
+#include "globals.h"
+
+using namespace globals;
+
 namespace menu {
 
 	static float speed = 1.f;
@@ -50,9 +54,6 @@ namespace menu {
 
 		do
 		{
-			static bool speedhack = 0;
-			static bool peeking = 0;
-			static bool fps_unlock = 0;
 
 			if (GetAsyncKeyState(VK_CAPITAL) && 1) {
 				speedhack = !speedhack;
@@ -68,6 +69,11 @@ namespace menu {
 				fps_unlock = !fps_unlock;
 
 				mega_beep(fps_unlock);
+			}
+			else if (GetAsyncKeyState(VK_F7) && 1) {
+				auto_battle = !auto_battle;
+
+				mega_beep(auto_battle);
 			}
 
 			if (speedhack) {
@@ -105,6 +111,7 @@ namespace menu {
 		puts("enable speedhack | hotkey: CAPSLOCK");
 		puts("enable peeking (: | hotkey: F5");
 		puts("enable fps unlock | hotkey: F6");
+		puts("enable auto battle unlock | hotkey: F7");
 
 		while (true)
 		{

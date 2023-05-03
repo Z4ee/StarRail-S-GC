@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "typedef.h"
-
+#include "globals.h"
 
 namespace hooks {
 	bool create_hook(HookData& data, uintptr_t GameAssembly);
@@ -46,7 +46,7 @@ namespace hooks {
 		__int64 __fastcall h_isautobattle(__int64 a1) {
 			auto ret = o_isautobattle(a1);
 
-			if (!ret) {
+			if (!ret && globals::auto_battle) {
 				h_setautobattleflag(a1, 1);
 			}
 
