@@ -25,7 +25,7 @@ namespace menu {
 
 	void set_speed(float speed) {
 		if (hooks::game::get_currect_phase() == RPG_BATTLE) {
-			set_speed_battle(speed);
+			set_speed_battle(speed * 5);
 			set_speed_global(1.f);
 		}
 		else {

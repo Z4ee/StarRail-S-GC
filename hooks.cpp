@@ -34,16 +34,30 @@ namespace hooks {
 		}
 
 		__int64 __fastcall h_setcurrentphase(__int64 a1, int a2, __int64 a3, char a4) {
-			//printf("RPG.Client.GamePhaseManager.SetCurrentPhase(0x%I64X, 0x%I32X, 0x%I64X, 0x%i)\n", a1, a2, a3, a4);
-
 			current_phase = a2;
 
 			return o_setcurrentphase(a1, a2, a3, a4);
 		}
+
+		char __fastcall h_setautobattleflag(__int64 a1, unsigned __int8 a2) {
+			return o_setautobattleflag(a1, a2);
+		}
+
+		__int64 __fastcall h_isautobattle(__int64 a1) {
+			auto ret = o_isautobattle(a1);
+
+			if (!ret) {
+				h_setautobattleflag(a1, 1);
+			}
+
+			return ret;
+		}
 	}
 
-	std::vector<HookData> v_hooks {
+	std::vector<HookData> v_hooks{
 		{"setcurrentphase", 0x5B9E130, &game::h_setcurrentphase, &o_setcurrentphase},
+		{"isautobattle", 0x512F580, &game::h_isautobattle, &o_isautobattle},
+		{"setautobattleflag", 0x5130040,&game::h_setautobattleflag,&o_setautobattleflag},
 	};
 
 	void init() {

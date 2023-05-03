@@ -18,3 +18,8 @@ typedef HANDLE(WINAPI* CREATE_FILE_W)(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUT
 CREATE_FILE_W p_CreateFileW = nullptr;
 CREATE_FILE_W t_CreateFileW;
 
+typedef __int64(__fastcall* ISAUTOBATTLE)(__int64 a1);
+ISAUTOBATTLE o_isautobattle = nullptr;
+
+typedef char(__fastcall* SETAUTOBATTLEFLAG)(__int64 a1, unsigned __int8 a2);
+SETAUTOBATTLEFLAG o_setautobattleflag = nullptr;
