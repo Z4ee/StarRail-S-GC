@@ -15,7 +15,7 @@ Now you can use speedhack
 - speedhack (hotkey: CAPSLOCK) (works everywhere)
 - peeking (hotkey: F5)
 - fps unlock (hotkey: F6)
-- auto battle unlock (hotkey: F7)
+- auto battle unlock (hotkey: F7) (in some fights it is forbidden to use auto-battle this feature unlocks this)
 
 ![image](https://user-images.githubusercontent.com/113752393/235335594-638626bf-b598-4c60-ab05-852968dfe0a3.png)
 
