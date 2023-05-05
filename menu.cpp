@@ -28,7 +28,7 @@ namespace menu {
 	}
 
 	void set_speed(float speed) {
-		if (hooks::game::is_dialogue && auto_dialogue) {
+		if (auto_dialogue) {
 			set_speed_battle(50.f);
 		}
 		else if (hooks::game::current_phase == RPG_BATTLE) {
@@ -79,10 +79,6 @@ namespace menu {
 				auto_battle = !auto_battle;
 				mega_beep(auto_battle);
 			}
-			else if (IsKeyPressed(VK_CAPITAL)) {
-				auto_dialogue = !auto_dialogue;
-				mega_beep(auto_dialogue);
-			}
 
 			if (speedhack) {
 				set_speed(speed);
@@ -105,13 +101,19 @@ namespace menu {
 				utils::write<uint32_t>(unity_player + 0x1C4E000, 60);
 			}
 
-			if (auto_dialogue && hooks::game::is_dialogue) {
+			if (GetAsyncKeyState(VK_CAPITAL)) {
+
+				auto_dialogue = 1;
+
 				if (GetForegroundWindow() == window) {
 					keybd_event(VK_SPACE, 0, 0, 0);
 					Sleep(20);
 					keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
 
 				}
+			}
+			else {
+				auto_dialogue = 0;
 			}
 
 			Sleep(16);
