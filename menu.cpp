@@ -79,6 +79,10 @@ namespace menu {
 				auto_battle = !auto_battle;
 				mega_beep(auto_battle);
 			}
+			else if (GetAsyncKeyState(VK_CAPITAL) & 1) {
+				auto_dialogue = !auto_dialogue;
+				mega_beep(auto_dialogue);
+			}
 
 			if (speedhack) {
 				set_speed(speed);
@@ -101,19 +105,10 @@ namespace menu {
 				utils::write<uint32_t>(unity_player + 0x1C4E000, 60);
 			}
 
-			if (GetAsyncKeyState(VK_CAPITAL)) {
-
-				auto_dialogue = 1;
-
-				if (GetForegroundWindow() == window) {
-					keybd_event(VK_SPACE, 0, 0, 0);
-					Sleep(20);
-					keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
-
-				}
-			}
-			else {
-				auto_dialogue = 0;
+			if (auto_dialogue && GetForegroundWindow() == window) {
+				keybd_event(VK_SPACE, 0, 0, 0);
+				Sleep(20);
+				keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
 			}
 
 			Sleep(16);
