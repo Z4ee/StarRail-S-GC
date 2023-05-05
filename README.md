@@ -12,11 +12,11 @@ You can use Extreme Injector (auto inject) to inject the dll into the game at st
 Now you can use speedhack
 
 # Functional:
-- speedhack (hotkey: F1) (works everywhere)
-- peeking (hotkey: F2)
-- fps unlock (hotkey: F3)
-- auto battle unlock (hotkey: F4) (in some fights it is forbidden to use auto-battle this feature unlocks this)
-- auto dialogue (hotkey: CAPSLOCK)
+- speedhack (hotkey: F1) (TOGGLE) (works everywhere)
+- peeking (hotkey: F2) (TOGGLE)
+- fps unlock (hotkey: F3) (TOGGLE)
+- auto battle unlock (hotkey: F4) (TOGGLE) (in some fights it is forbidden to use auto-battle this feature unlocks this)
+- auto dialogue (hotkey: CAPSLOCK) (HOLD)
 
 ![image](https://user-images.githubusercontent.com/113752393/235335594-638626bf-b598-4c60-ab05-852968dfe0a3.png)
 
