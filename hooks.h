@@ -3,7 +3,8 @@
 
 namespace hooks {
 	namespace game {
-		int get_currect_phase();
+		extern int current_phase;
+		extern bool is_dialogue;
 	}
 
 	void init();

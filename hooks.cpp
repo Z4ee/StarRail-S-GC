@@ -27,11 +27,8 @@ namespace hooks {
 	}
 
 	namespace game {
-		int current_phase = 0;
-
-		int get_currect_phase() {
-			return current_phase;
-		}
+		extern int current_phase = 0;
+		extern bool is_dialogue = 0;
 
 		__int64 __fastcall h_setcurrentphase(__int64 a1, int a2, __int64 a3, char a4) {
 			current_phase = a2;
@@ -52,12 +49,32 @@ namespace hooks {
 
 			return ret;
 		}
+
+
+
+		__int64 __fastcall h_lockplayercontrol() {
+
+			//printf("RPG.GameCore.DialogueUtil.LockPlayerControl()\n");
+
+			is_dialogue = true;
+			return o_lockplayercontrol();
+		}
+
+		__int64 __fastcall h_unlockplayercontrol() {
+
+			//printf("RPG.GameCore.DialogueUtil.UnlockPlayerControl()\n");
+
+			is_dialogue = false;
+			return o_unlockplayercontrol();
+		}
 	}
 
-	std::vector<HookData> v_hooks{
+	std::vector<HookData> v_hooks {
 		{"setcurrentphase", 0x5B9E130, &game::h_setcurrentphase, &o_setcurrentphase},
 		{"isautobattle", 0x512F580, &game::h_isautobattle, &o_isautobattle},
 		{"setautobattleflag", 0x5130040,&game::h_setautobattleflag,&o_setautobattleflag},
+		{"lockplayercontrol", 0x507A820, &game::h_lockplayercontrol, &o_lockplayercontrol},
+		{"unlockplayercontrol", 0x507B0A0, &game::h_unlockplayercontrol, &o_unlockplayercontrol},
 	};
 
 	void init() {

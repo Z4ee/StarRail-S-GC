@@ -6,3 +6,4 @@ typedef enum GamePhase
     RPG_WORLD = 12,
     RPG_BATTLE = 15,
 };
+

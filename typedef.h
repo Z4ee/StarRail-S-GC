@@ -23,3 +23,12 @@ ISAUTOBATTLE o_isautobattle = nullptr;
 
 typedef char(__fastcall* SETAUTOBATTLEFLAG)(__int64 a1, unsigned __int8 a2);
 SETAUTOBATTLEFLAG o_setautobattleflag = nullptr;
+
+typedef __int64(__fastcall* SHOWTALKUI)(unsigned __int8 a1, unsigned int a2);
+SHOWTALKUI o_showtalkui = nullptr;
+
+typedef __int64(__fastcall* LOCKPLAYERCONTROL)();
+LOCKPLAYERCONTROL o_lockplayercontrol = nullptr;
+
+typedef __int64(__fastcall* UNLOCKPLAYERCONTROL)();
+UNLOCKPLAYERCONTROL o_unlockplayercontrol = nullptr;
