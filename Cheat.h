@@ -66,9 +66,7 @@ namespace Cheat
 
 			}
 
-			if (ImGui::Button("Save Config")) {
-				Config::SaveConfig();
-			}
+			
 
 			ImGui::EndTabItem();
 		}
@@ -100,6 +98,10 @@ namespace Cheat
 
 			if (ImGui::Button("Unload"))
 				GlobalSetting::Unload = true;
+
+			if (ImGui::Button("Save Config")) {
+				Config::SaveConfig();
+			}
 
 			ImGui::EndTabItem();
 		}
