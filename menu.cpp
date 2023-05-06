@@ -29,7 +29,7 @@ namespace menu {
 
 	void set_speed(float speed) {
 		if (auto_dialogue) {
-			set_speed_battle(50.f);
+			set_speed_battle(5.f);
 		}
 		else if (hooks::game::current_phase == RPG_BATTLE) {
 			set_speed_battle(speed * 5);
@@ -106,11 +106,9 @@ namespace menu {
 			}
 
 			if (auto_dialogue && GetForegroundWindow() == window) {
-				POINT cursor_pos;
-				GetCursorPos(&cursor_pos);
-				mouse_event(MOUSEEVENTF_LEFTDOWN, cursor_pos.x, cursor_pos.y, 0, 0);
+				keybd_event(VK_SPACE, 0, 0, 0);
 				Sleep(20);
-				mouse_event(MOUSEEVENTF_LEFTUP, cursor_pos.x, cursor_pos.y, 0, 0);
+				keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
 			}
 
 			Sleep(16);
