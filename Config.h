@@ -19,7 +19,7 @@ namespace Config
 		return std::filesystem::path(path).parent_path().string();
 	}
 
-	std::filesystem::path file_path;
+	static std::filesystem::path file_path;
 
 
 	struct ConfigPreset 
