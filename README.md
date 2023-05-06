@@ -22,3 +22,4 @@ Step 5: Done!
 ![image](https://user-images.githubusercontent.com/113752393/236632880-84855a81-098e-4843-a4e5-877b78b8b110.png)
 
 Open/Close menu on F1
+Auto-Dialogue on CAPSLOCK (if not automatically detected)
