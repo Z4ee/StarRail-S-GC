@@ -65,6 +65,9 @@ void Setup()
 
 	Sleep(15000);
 
+	if (!Config::LoadConfig())
+		puts("[-] Failed to read config");
+
 	if (!Direct3D.Initialization())
 		puts("[-] Failed to setup Direct3D!");
 	else
