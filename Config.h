@@ -25,6 +25,7 @@ namespace Config
 		bool EnableBattleSpeedHack = false;
 		float BattleSpeed = 1.f;
 		bool AutoBattleUnlock = false;
+		bool ForceBattle = false;
 
 		bool FpsUnlock = false;
 		int Fps = 60;
@@ -43,6 +44,7 @@ namespace Config
 		EnableBattleSpeedHack,
 		BattleSpeed,
 		AutoBattleUnlock,
+		ForceBattle,
 		FpsUnlock,
 		Fps
 	)
@@ -69,6 +71,7 @@ namespace Config
 		GlobalSetting::battle::speed_hack = j.get<ConfigPreset>().EnableBattleSpeedHack;
 		GlobalSetting::battle::battle_speed = j.get<ConfigPreset>().BattleSpeed;
 		GlobalSetting::battle::auto_battle_unlock = j.get<ConfigPreset>().AutoBattleUnlock;
+		GlobalSetting::battle::force_battle = j.get<ConfigPreset>().ForceBattle;
 
 		GlobalSetting::other::fps_unlock = j.get<ConfigPreset>().FpsUnlock;
 		GlobalSetting::other::fps = j.get<ConfigPreset>().Fps;
@@ -93,6 +96,7 @@ namespace Config
 			GlobalSetting::battle::speed_hack,
 			GlobalSetting::battle::battle_speed,
 			GlobalSetting::battle::auto_battle_unlock,
+			GlobalSetting::battle::force_battle,
 
 			GlobalSetting::other::fps_unlock,
 			GlobalSetting::other::fps

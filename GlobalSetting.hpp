@@ -26,6 +26,7 @@ namespace GlobalSetting
 		inline float battle_speed = 1.f;
 
 		inline bool auto_battle_unlock = false;
+		bool force_battle = false;
 	}
 
 	namespace other 
