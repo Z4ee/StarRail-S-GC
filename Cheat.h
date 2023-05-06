@@ -20,6 +20,7 @@ namespace Cheat
 		float battle_speed = 1.f;
 
 		bool auto_battle_unlock = false;
+		bool force_battle = false;
 	}
 
 	namespace other {
@@ -50,8 +51,10 @@ namespace Cheat
 			ImGui::Checkbox("Peeking", &world::peeking);
 
 			ImGui::Checkbox("Auto-Dialogue", &world::auto_dialogue);
+			
 
 			if (world::auto_dialogue) {
+				ImGui::Text("also works on hotkey (CAPSLOCK)");
 				ImGui::Checkbox("Mouse Mode", &world::mouse_mode);
 			}
 
@@ -71,6 +74,8 @@ namespace Cheat
 			}
 
 			ImGui::Checkbox("Auto-Battle Unlock", &battle::auto_battle_unlock);
+
+			ImGui::Checkbox("Force Auto-Battle", &battle::force_battle);
 
 			ImGui::EndTabItem();
 		}
@@ -126,6 +131,8 @@ namespace Cheat
 	namespace hooks {
 		__int64(__fastcall* o_setcurrentphase)(__int64 a1, int a2, __int64 a3, char a4) = nullptr;
 		char(__fastcall* o_get_isindialog)(__int64 a1) = nullptr;
+		__int64(__fastcall* o_isautobattle)(__int64 a1);
+		char(__fastcall* o_setautobattleflag)(__int64 a1, unsigned __int8 a2);
 
 		struct HookData {
 			std::string name;
@@ -148,6 +155,20 @@ namespace Cheat
 			}
 		}
 
+		char __fastcall h_setautobattleflag(__int64 a1, unsigned __int8 a2) {
+			return o_setautobattleflag(a1, a2);
+		}
+
+		__int64 __fastcall h_isautobattle(__int64 a1) {
+			auto ret = o_isautobattle(a1);
+
+			if (!ret && battle::force_battle) {
+				h_setautobattleflag(a1, 1);
+			}
+
+			return ret;
+		}
+
 		/* (RPG.Client.GamePhaseManager.SetCurrentPhase) */
 		__int64 __fastcall h_setcurrentphase(__int64 a1, int a2, __int64 a3, char a4) {
 			game::phase = a2;
@@ -166,11 +187,15 @@ namespace Cheat
 
 			if (GlobalSetting::ChinaVersion) {
 				v_hooks.push_back({ "setcurrentphase", 0x5B9DFD0, &h_setcurrentphase, &o_setcurrentphase });
-				v_hooks.push_back({ "get_isindialog", 0x5ADD460, &h_get_isindialog, &o_get_isindialog });
+				v_hooks.push_back({ "get_isindialog", 0x5ADD450, &h_get_isindialog, &o_get_isindialog });
+				v_hooks.push_back({ "isautobattle", 0x512F580, &h_isautobattle, &o_isautobattle });
+				v_hooks.push_back({ "setautobattleflag", 0x5130040,&h_setautobattleflag,&o_setautobattleflag });
 			}
 			else {
 				v_hooks.push_back({ "setcurrentphase", 0x5B9E130, &h_setcurrentphase, &o_setcurrentphase });
 				v_hooks.push_back({ "get_isindialog", 0x5ADD460, &h_get_isindialog, &o_get_isindialog });
+				v_hooks.push_back({ "isautobattle", 0x512F580, &h_isautobattle, &o_isautobattle });
+				v_hooks.push_back({ "setautobattleflag", 0x5130040,&h_setautobattleflag,&o_setautobattleflag });
 			}
 
 			static auto CreateHook = [](LPVOID pTarget, LPVOID pDetour, LPVOID* ppOriginal)->bool
@@ -198,27 +223,30 @@ namespace Cheat
 
 		while (true)
 		{
-			if (hooks::game::phase == 12 && world::auto_dialogue && !GlobalSetting::ShowMenu && hooks::game::get_is_in_dialog()) {
+			if (hooks::game::phase == 12 && world::auto_dialogue && !GlobalSetting::ShowMenu) {
 
 				// idk, but SendMessage not working ):
 				// SendMessageA(target_window, WM_KEYDOWN, VK_SPACE, 0); 
 				// SendMessageA(target_window, WM_KEYUP, VK_SPACE, 0);
 				// if you know how to fix this -> create GitHub issue or Pull Req
 
-				Sleep(16);
+				if (hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL)) {
 
-				if (GetForegroundWindow() == target_window) {
-					if (!world::mouse_mode) {
-						keybd_event(VK_SPACE, 0, 0, 0);
-						Sleep(20);
-						keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
-					}
-					else {
-						POINT cursor_pos;
-						GetCursorPos(&cursor_pos);
-						mouse_event(MOUSEEVENTF_LEFTDOWN, cursor_pos.x, cursor_pos.y, 0, 0);
-						Sleep(10);
-						mouse_event(MOUSEEVENTF_LEFTUP, cursor_pos.x, cursor_pos.y, 0, 0);
+					Sleep(16);
+
+					if (GetForegroundWindow() == target_window) {
+						if (!world::mouse_mode) {
+							keybd_event(VK_SPACE, 0, 0, 0);
+							Sleep(20);
+							keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
+						}
+						else {
+							POINT cursor_pos;
+							GetCursorPos(&cursor_pos);
+							mouse_event(MOUSEEVENTF_LEFTDOWN, cursor_pos.x, cursor_pos.y, 0, 0);
+							Sleep(10);
+							mouse_event(MOUSEEVENTF_LEFTUP, cursor_pos.x, cursor_pos.y, 0, 0);
+						}
 					}
 				}
 			}
@@ -239,7 +267,7 @@ namespace Cheat
 		{
 			if (hooks::game::phase == 12) { // hooks::game::phase == WORLD
 				if (world::speed_hack) {
-					if (hooks::game::get_is_in_dialog()) {
+					if (hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL)) {
 						Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, world::dialogue_speed);
 					}
 					else {
