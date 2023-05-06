@@ -30,7 +30,6 @@ namespace menu {
 	void set_speed(float speed) {
 		if (auto_dialogue) {
 			set_speed_battle(2.f);
-			set_speed_global(2.f);
 		}
 		else if (hooks::game::current_phase == RPG_BATTLE) {
 			set_speed_battle(speed * 5);
