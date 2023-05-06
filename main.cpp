@@ -65,8 +65,7 @@ void Setup()
 
 	Sleep(15000);
 
-	if (!Config::LoadConfig())
-		puts("[-] Failed to read config");
+	
 
 	if (!Direct3D.Initialization())
 		puts("[-] Failed to setup Direct3D!");
@@ -85,6 +84,18 @@ void Setup()
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
+	if (!Config::LoadConfig(hModule)) 
+	{
+		// first time user or invalid config
+		puts("[-] Failed to read config");
+		// create new config 
+		Config::SaveConfig(); 
+		Sleep(200);
+		// re-attempt load
+		if (!Config::LoadConfig(hModule))
+			return false;
+	}
+
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
 		AllocConsole();

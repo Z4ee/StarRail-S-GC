@@ -10,6 +10,18 @@ using json = nlohmann::json;
 
 namespace Config 
 {
+
+	std::string GetModulePath(HMODULE hModule) 
+	{
+		char path[MAX_PATH] = {};
+		GetModuleFileNameA(hModule, path, MAX_PATH);
+
+		return std::filesystem::path(path).parent_path().string();
+	}
+
+	std::filesystem::path file_path;
+
+
 	struct ConfigPreset 
 	{
 		bool EnableWorldSpeedHack = false;
@@ -49,11 +61,12 @@ namespace Config
 		Fps
 	)
 
-	bool LoadConfig() 
+	bool LoadConfig(HMODULE hModule)
 	{
 		json j;
 
-		std::ifstream f("C:\\StarRail-S-GC\\config.json", std::ifstream::binary);
+		file_path = GetModulePath(hModule) + "\\config.json";
+		std::ifstream f(file_path, std::ifstream::binary);
 		if (f.fail()) return false;
 
 		f >> j;
@@ -102,11 +115,8 @@ namespace Config
 			GlobalSetting::other::fps
 		};
 
-		if (CreateDirectory(L"C:\\StarRail-S-GC", NULL) || ERROR_ALREADY_EXISTS == GetLastError()) {
-			std::ofstream o("C:\\StarRail-S-GC\\config.json");
-			o << std::setw(4) << j << std::endl;
-		}
-		else return;
+		std::ofstream o(file_path);
+		o << std::setw(4) << j << std::endl;
 	}
 }
 

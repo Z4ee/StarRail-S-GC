@@ -66,6 +66,10 @@ namespace Cheat
 
 			}
 
+			if (ImGui::Button("Save Config")) {
+				Config::SaveConfig();
+			}
+
 			ImGui::EndTabItem();
 		}
 
