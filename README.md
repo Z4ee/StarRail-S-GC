@@ -9,7 +9,7 @@ Step 1: Download the StarRail archive from releases.
 
 Step 2: Unzip the archive.
 
-Step 3: Run SRLauncher.exe.
+Step 3: Run SRLauncher.exe. (on behalf of the administrator)
 
 ![image](https://user-images.githubusercontent.com/113752393/236632832-a562508a-ad1d-4422-924b-445797288416.png)
 
