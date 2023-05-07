@@ -217,8 +217,6 @@ namespace Cheat
 			ImGui::EndTabItem();
 		}
 
-		ImGui::BeginTabBar("##tabs");
-
 		if (ImGui::BeginTabItem("About"))
 		{
 			ImGui::Text("About this project");
