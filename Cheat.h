@@ -4,112 +4,6 @@
 
 namespace Cheat
 {
-	inline void Update()
-	{
-		if (!GlobalSetting::ShowMenu)
-			return;
-
-		static ImGuiWindowFlags classFinderWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
-
-		ImGui::Begin("HSR-GC", 0, classFinderWindowFlags);
-
-		ImGui::BeginTabBar("##tabs");
-
-		if (ImGui::BeginTabItem("World"))
-		{
-			ImGui::Checkbox("Speed Modifier", &GlobalSetting::world::speed_hack);
-
-			if (GlobalSetting::world::speed_hack) {
-				ImGui::SliderFloat("Global", &GlobalSetting::world::global_speed, 0.1f, 10.f, "%.1f");
-				ImGui::SliderFloat("Dialogue", &GlobalSetting::world::dialogue_speed, 0.1f, 10.f, "%.1f");
-			}
-
-			ImGui::Checkbox("Peeking", &GlobalSetting::world::peeking);
-
-			ImGui::Checkbox("Auto-Dialogue", &GlobalSetting::world::auto_dialogue);
-
-			if (GlobalSetting::world::auto_dialogue) {
-				ImGui::Text("also works on hotkey (CAPSLOCK)");
-				ImGui::Checkbox("Mouse Mode", &GlobalSetting::world::mouse_mode);
-			}
-
-			ImGui::Checkbox("Invisibility", &GlobalSetting::world::invisibility);
-
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Battle"))
-		{
-			ImGui::Checkbox("Speed Modifier", &GlobalSetting::battle::speed_hack);
-
-			if (GlobalSetting::battle::speed_hack) {
-
-				ImGui::SliderFloat("Battle", &GlobalSetting::battle::battle_speed, 0.1f, 100.f, "%.1f");
-
-			}
-
-			//ImGui::Checkbox("Auto-Battle Unlock", &GlobalSetting::battle::auto_battle_unlock);
-
-			ImGui::Checkbox("Force Auto-Battle", &GlobalSetting::battle::force_battle);
-
-			if (GlobalSetting::battle::force_battle) {
-				ImGui::Text("if you enabled it in battle then you need to do some action to make it work");
-			}
-
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Other"))
-		{
-			ImGui::Checkbox("FPS Unlock", &GlobalSetting::other::fps_unlock);
-
-			if (GlobalSetting::other::fps_unlock) {
-
-				ImGui::InputInt("FPS", &GlobalSetting::other::fps);
-
-			}
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Settings"))
-		{
-			static bool pinWindow = false;
-
-			if (ImGui::Checkbox("Pin Window", &pinWindow))
-			{
-				if (pinWindow)
-				{
-					classFinderWindowFlags |= ImGuiWindowFlags_NoMove;
-					classFinderWindowFlags |= ImGuiWindowFlags_NoResize;
-				}
-				else
-				{
-					classFinderWindowFlags &= ~ImGuiWindowFlags_NoMove;
-					classFinderWindowFlags &= ~ImGuiWindowFlags_NoResize;
-				}
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Reset Position"))
-				ImGui::SetWindowPos(ImVec2(0, 0));
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Unload"))
-				GlobalSetting::Unload = true;
-
-			if (ImGui::Button("Save Config")) {
-				Config::SaveConfig();
-			}
-
-			ImGui::EndTabItem();
-		}
-
-		ImGui::EndTabBar();
-		ImGui::End();
-	}
-
 	namespace hooks {
 		__int64(__fastcall* o_setcurrentphase)(__int64 a1, int a2, __int64 a3, char a4) = nullptr;
 		char(__fastcall* o_get_isindialog)(__int64 a1) = nullptr;
@@ -125,6 +19,7 @@ namespace Cheat
 		};
 
 		namespace game {
+
 			int phase = 0;
 
 			std::chrono::steady_clock::time_point last_call_time;
@@ -135,6 +30,18 @@ namespace Cheat
 				auto time_since_last_call = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_call_time);
 				return time_since_last_call.count() < 25;
 			}
+
+			const char* get_phase_in_text() {
+				const char* phaseText = "Indefinite";
+
+
+				phase == 12 ? phaseText = "World" : 0;
+				phase == 15 ? phaseText = "Battle" : 0;
+				hooks::game::get_is_in_dialog() ? phaseText = "Dialogue" : 0;
+
+				return phaseText;
+			}
+
 		}
 
 		char __fastcall h_setautobattleflag(__int64 a1, unsigned __int8 a2) {
@@ -199,6 +106,122 @@ namespace Cheat
 			}
 		}
 	}
+
+	inline void Update()
+	{
+		if (!GlobalSetting::ShowMenu)
+			return;
+
+		static ImGuiWindowFlags classFinderWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
+
+		ImGui::Begin("HSR-GC", 0, classFinderWindowFlags);
+
+		ImGui::BeginTabBar("##tabs");
+
+		if (ImGui::BeginTabItem("World"))
+		{
+			ImGui::Checkbox("Speed Modifier", &GlobalSetting::world::speed_hack);
+
+			if (GlobalSetting::world::speed_hack) {
+				ImGui::SliderFloat("Global", &GlobalSetting::world::global_speed, 0.1f, 10.f, "%.1f");
+				ImGui::SliderFloat("Dialogue", &GlobalSetting::world::dialogue_speed, 0.1f, 10.f, "%.1f");
+			}
+
+			ImGui::Checkbox("Peeking", &GlobalSetting::world::peeking);
+
+			ImGui::Checkbox("Auto-Dialogue", &GlobalSetting::world::auto_dialogue);
+
+			if (GlobalSetting::world::auto_dialogue) {
+				ImGui::Text("also works on hotkey (CAPSLOCK)");
+				ImGui::Checkbox("Mouse Mode", &GlobalSetting::world::mouse_mode);
+			}
+
+			ImGui::Checkbox("Invisibility", &GlobalSetting::world::invisibility);
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Battle"))
+		{
+			ImGui::Checkbox("Speed Modifier", &GlobalSetting::battle::speed_hack);
+
+			if (GlobalSetting::battle::speed_hack) {
+
+				ImGui::SliderFloat("Battle", &GlobalSetting::battle::battle_speed, 0.1f, 100.f, "%.1f");
+
+			}
+
+			//ImGui::Checkbox("Auto-Battle Unlock", &GlobalSetting::battle::auto_battle_unlock);
+
+			ImGui::Checkbox("Force Auto-Battle", &GlobalSetting::battle::force_battle);
+
+			if (GlobalSetting::battle::force_battle) {
+				ImGui::Text("if you enabled it in battle then you need to do some action to make it work");
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Other"))
+		{
+			ImGui::Checkbox("FPS Unlock", &GlobalSetting::other::fps_unlock);
+
+			if (GlobalSetting::other::fps_unlock) {
+				ImGui::InputInt("FPS", &GlobalSetting::other::fps);
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Debug"))
+		{
+
+			ImGui::Text("Phase: %s", hooks::game::get_phase_in_text());
+			ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Settings"))
+		{
+			static bool pinWindow = false;
+
+			if (ImGui::Checkbox("Pin Window", &pinWindow))
+			{
+				if (pinWindow)
+				{
+					classFinderWindowFlags |= ImGuiWindowFlags_NoMove;
+					classFinderWindowFlags |= ImGuiWindowFlags_NoResize;
+				}
+				else
+				{
+					classFinderWindowFlags &= ~ImGuiWindowFlags_NoMove;
+					classFinderWindowFlags &= ~ImGuiWindowFlags_NoResize;
+				}
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Reset Position"))
+				ImGui::SetWindowPos(ImVec2(0, 0));
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Unload"))
+				GlobalSetting::Unload = true;
+
+			if (ImGui::Button("Save Config")) {
+				Config::SaveConfig();
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+		ImGui::End();
+	}
+
+
 
 	inline void Dialogue() {
 		HWND target_window = 0;
@@ -279,8 +302,13 @@ namespace Cheat
 	}
 
 	inline void UpdateOther(uint64_t unity_player) {
-		if (GlobalSetting::other::fps_unlock && GlobalSetting::other::fps > 59) {
-			Utils::Write<uint32_t>(unity_player + 0x1C4E000, GlobalSetting::other::fps);
+		if (GlobalSetting::other::fps_unlock) {
+			if (GlobalSetting::other::fps > 59) {
+				Utils::Write<uint32_t>(unity_player + 0x1C4E000, GlobalSetting::other::fps);
+			}
+		}
+		else {
+			Utils::Write<uint32_t>(unity_player + 0x1C4E000, 60);
 		}
 	}
 
