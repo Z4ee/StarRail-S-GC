@@ -9,8 +9,7 @@ namespace Cheat
 		if (!GlobalSetting::ShowMenu)
 			return;
 
-		static ImGuiWindowFlags classFinderWindowFlags = 0;
-
+		static ImGuiWindowFlags classFinderWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
 		ImGui::Begin("HSR-GC", 0, classFinderWindowFlags);
 
 		ImGui::BeginTabBar("##tabs");
