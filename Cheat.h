@@ -217,6 +217,21 @@ namespace Cheat
 			ImGui::EndTabItem();
 		}
 
+		ImGui::BeginTabBar("##tabs");
+
+		if (ImGui::BeginTabItem("About"))
+		{
+			ImGui::Text("About this project");
+			ImGui::Text("This project was created by Z4ee");
+			ImGui::Text("This project is free,Not for sell");
+			ImGui::Text(u8"这个项目是免费公开的如果你是收费获得的此项目请申请退款并曝光出售它的人");
+			ImGui::Text("List of Contributing Developers");
+			ImGui::Text("Z4ee");
+			ImGui::Text("ky-ler");
+
+			ImGui::EndTabItem();
+		}
+
 		ImGui::EndTabBar();
 		ImGui::End();
 	}
