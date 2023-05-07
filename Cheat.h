@@ -53,8 +53,6 @@ namespace Cheat
 
 			ImGui::Checkbox("Force Auto-Battle", &GlobalSetting::battle::force_battle);
 
-			ImGui::Checkbox("Force Auto-Battle", &battle::force_battle);
-
 			ImGui::EndTabItem();
 		}
 
