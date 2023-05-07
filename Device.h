@@ -47,6 +47,19 @@ namespace Device
 			pBackBuffer->Release();
 			oWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 			ImGui::CreateContext();
+
+			if (!Config::LoadConfig(dll_hmodule))
+			{
+				// first time user or invalid config
+				puts("[-] Failed to read config");
+				// create new config 
+				Config::SaveConfig();
+				Sleep(200);
+				// re-attempt load
+				if (!Config::LoadConfig(dll_hmodule))
+					return false;
+			}
+
 			ImGui::GetIO().IniFilename = nullptr;
 			ImGui::GetIO().LogFilename = nullptr;
 			ImGui::GetStyle().FrameRounding = 3.0f;

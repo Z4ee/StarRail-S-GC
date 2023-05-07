@@ -40,6 +40,7 @@ inline ID3D11DeviceContext* pContext = NULL;
 inline ID3D11RenderTargetView* mainRenderTargetView = NULL;
 inline WNDPROC oWndProc = NULL;
 inline HWND hWnd = NULL;
+inline HMODULE dll_hmodule = NULL;
 
 #include "Utils.h"
 #include "Cheat.h"

@@ -84,17 +84,7 @@ void Setup()
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-	if (!Config::LoadConfig(hModule)) 
-	{
-		// first time user or invalid config
-		puts("[-] Failed to read config");
-		// create new config 
-		Config::SaveConfig(); 
-		Sleep(200);
-		// re-attempt load
-		if (!Config::LoadConfig(hModule))
-			return false;
-	}
+	dll_hmodule = hModule;
 
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
