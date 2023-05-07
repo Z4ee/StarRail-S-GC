@@ -10,6 +10,7 @@ namespace Cheat
 			return;
 
 		static ImGuiWindowFlags classFinderWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
+
 		ImGui::Begin("HSR-GC", 0, classFinderWindowFlags);
 
 		ImGui::BeginTabBar("##tabs");
