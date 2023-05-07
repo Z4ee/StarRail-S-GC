@@ -53,6 +53,8 @@ namespace Cheat
 
 			ImGui::Checkbox("Force Auto-Battle", &GlobalSetting::battle::force_battle);
 
+			ImGui::Checkbox("Force Auto-Battle", &battle::force_battle);
+
 			ImGui::EndTabItem();
 		}
 
@@ -207,6 +209,7 @@ namespace Cheat
 		{
 			if (hooks::game::phase == 12 && GlobalSetting::world::auto_dialogue && !GlobalSetting::ShowMenu) {
 
+
 				// idk, but SendMessage not working ):
 				// SendMessageA(target_window, WM_KEYDOWN, VK_SPACE, 0); 
 				// SendMessageA(target_window, WM_KEYUP, VK_SPACE, 0);
@@ -218,6 +221,7 @@ namespace Cheat
 
 					if (GetForegroundWindow() == target_window) {
 						if (!GlobalSetting::world::mouse_mode) {
+
 							keybd_event(VK_SPACE, 0, 0, 0);
 							Sleep(20);
 							keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
@@ -251,6 +255,7 @@ namespace Cheat
 				if (GlobalSetting::world::speed_hack) {
 					if (hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL)) {
 						Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, GlobalSetting::world::dialogue_speed);
+
 					}
 					else {
 						Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, GlobalSetting::world::global_speed);
