@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cheat.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Core.hpp" />
     <ClInclude Include="dependencies\Direct3D\Direct3D.h" />
     <ClInclude Include="dependencies\ImGui\backends\imgui_impl_dx11.h" />

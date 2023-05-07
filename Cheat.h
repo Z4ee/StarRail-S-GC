@@ -28,7 +28,6 @@ namespace Cheat
 
 			ImGui::Checkbox("Auto-Dialogue", &GlobalSetting::world::auto_dialogue);
 
-
 			if (GlobalSetting::world::auto_dialogue) {
 				ImGui::Text("also works on hotkey (CAPSLOCK)");
 				ImGui::Checkbox("Mouse Mode", &GlobalSetting::world::mouse_mode);
@@ -49,9 +48,13 @@ namespace Cheat
 
 			}
 
-			ImGui::Checkbox("Auto-Battle Unlock", &GlobalSetting::battle::auto_battle_unlock);
+			//ImGui::Checkbox("Auto-Battle Unlock", &GlobalSetting::battle::auto_battle_unlock);
 
 			ImGui::Checkbox("Force Auto-Battle", &GlobalSetting::battle::force_battle);
+
+			if (GlobalSetting::battle::force_battle) {
+				ImGui::Text("if you enabled it in battle then you need to do some action to make it work");
+			}
 
 			ImGui::EndTabItem();
 		}
@@ -65,9 +68,6 @@ namespace Cheat
 				ImGui::InputInt("FPS", &GlobalSetting::other::fps);
 
 			}
-
-			
-
 			ImGui::EndTabItem();
 		}
 
@@ -153,12 +153,14 @@ namespace Cheat
 
 		/* (RPG.Client.GamePhaseManager.SetCurrentPhase) */
 		__int64 __fastcall h_setcurrentphase(__int64 a1, int a2, __int64 a3, char a4) {
+			printf("currect phase: %i\n", a2);
 			game::phase = a2;
 			return o_setcurrentphase(a1, a2, a3, a4);
 		}
 
 		/* (RPG.Client.DialogueManager.get_IsInDialog) */
 		char __fastcall h_get_isindialog(__int64 a1) {
+			//printf("called->get_isindialog()\n");
 			game::last_call_time = std::chrono::steady_clock::now();
 			return o_get_isindialog(a1);;
 		}
@@ -199,19 +201,17 @@ namespace Cheat
 	}
 
 	inline void Dialogue() {
-
 		HWND target_window = 0;
+
 		while (!target_window) target_window = FindWindowA("UnityWndClass", nullptr);
 
-		while (true)
-		{
-			if (hooks::game::phase == 12 && GlobalSetting::world::auto_dialogue && !GlobalSetting::ShowMenu) {
+		while (true) {
+			if (hooks::game::phase != 12) {
+				Sleep(500);
+				continue;
+			}
 
-
-				// idk, but SendMessage not working ):
-				// SendMessageA(target_window, WM_KEYDOWN, VK_SPACE, 0); 
-				// SendMessageA(target_window, WM_KEYUP, VK_SPACE, 0);
-				// if you know how to fix this -> create GitHub issue or Pull Req
+			if (GlobalSetting::world::auto_dialogue && !GlobalSetting::ShowMenu) {
 
 				if (hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL)) {
 
@@ -219,7 +219,6 @@ namespace Cheat
 
 					if (GetForegroundWindow() == target_window) {
 						if (!GlobalSetting::world::mouse_mode) {
-
 							keybd_event(VK_SPACE, 0, 0, 0);
 							Sleep(20);
 							keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
@@ -234,6 +233,54 @@ namespace Cheat
 					}
 				}
 			}
+			else {
+				Sleep(100);
+			}
+		}
+	}
+
+	inline void UpdateSpeed(const float speed, uint64_t game_assembly, uint64_t unity_player, const bool is_battle) {
+
+		if (is_battle) {
+			Utils::Write<float>(Utils::Read<__int64>(Utils::Read<__int64>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, speed);
+			Utils::Write<float>(Utils::Read<__int64>(unity_player + 0x1D21D78) + 0xFC, 1.f);
+		}
+		else {
+			Utils::Write<float>(Utils::Read<__int64>(Utils::Read<__int64>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, 1.f);
+			Utils::Write<float>(Utils::Read<__int64>(unity_player + 0x1D21D78) + 0xFC, speed);
+		}
+	}
+
+	inline void UpdateWorld(uint64_t game_assembly, uint64_t unity_player) {
+		if (hooks::game::phase != 12) {
+			return;
+		}
+
+		float speed = 1.f;
+
+		if (GlobalSetting::world::speed_hack) {
+			speed = hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL) ? GlobalSetting::world::dialogue_speed : GlobalSetting::world::global_speed;
+		}
+
+		UpdateSpeed(speed, game_assembly, unity_player, false);
+
+		Utils::Write<uint8_t>(game_assembly + 0x51292C0, GlobalSetting::world::peeking ? 0xC3 : 0x40);
+		Utils::Write<uint8_t>(game_assembly + 0x5800F40, GlobalSetting::world::invisibility ? 0xC3 : 0x40);
+	}
+
+	inline void UpdateBattle(uint64_t game_assembly, uint64_t unity_player) {
+		if (hooks::game::phase != 15) {
+			return;
+		}
+
+		UpdateSpeed(GlobalSetting::battle::speed_hack ? GlobalSetting::battle::battle_speed : 1.f, game_assembly, unity_player, true);
+
+		Utils::Write<uint32_t>(game_assembly + 0x5DA5F20, GlobalSetting::battle::auto_battle_unlock ? 0x90C3C031 : 0x83485340);
+	}
+
+	inline void UpdateOther(uint64_t unity_player) {
+		if (GlobalSetting::other::fps_unlock && GlobalSetting::other::fps > 59) {
+			Utils::Write<uint32_t>(unity_player + 0x1C4E000, GlobalSetting::other::fps);
 		}
 	}
 
@@ -247,64 +294,12 @@ namespace Cheat
 
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Dialogue, 0, 0, 0);
 
-		while (true)
-		{
-			if (hooks::game::phase == 12) { // hooks::game::phase == WORLD
-				if (GlobalSetting::world::speed_hack) {
-					if (hooks::game::get_is_in_dialog() || GetAsyncKeyState(VK_CAPITAL)) {
-						Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, GlobalSetting::world::dialogue_speed);
+		while (true) {
+			UpdateWorld(game_assembly, unity_player);
+			UpdateBattle(game_assembly, unity_player);
+			UpdateOther(unity_player);
 
-					}
-					else {
-						Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, GlobalSetting::world::global_speed);
-						Utils::Write<float>(Utils::Read<uint64_t>(Utils::Read<uint64_t>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, 1.f);
-					}
-
-				}
-				else {
-					Utils::Write<float>(Utils::Read<uint64_t>(unity_player + 0x1D21D78) + 0xFC, 1.f);
-					Utils::Write<float>(Utils::Read<uint64_t>(Utils::Read<uint64_t>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, 1.f);
-				}
-
-				/* (RPG.Client.BaseShaderPropertyTransition.SetElevationDitherAlphaValue ) */
-				if (GlobalSetting::world::peeking) {
-					Utils::Write<uint8_t>(game_assembly + 0x51292C0, 0xC3);
-				}
-				else {
-					Utils::Write<uint8_t>(game_assembly + 0x51292C0, 0x40);
-				}
-
-				/* (RPG.GameCore.NPCComponent.set_AlertValue) */
-				if (GlobalSetting::world::invisibility) {
-					Utils::Write<uint8_t>(game_assembly + 0x5800F40, 0xC3);
-				}
-				else {
-					Utils::Write<uint8_t>(game_assembly + 0x5800F40, 0x40);
-				}
-			}
-
-			if (hooks::game::phase == 15) {
-				if (GlobalSetting::battle::speed_hack) {
-					Utils::Write<float>(Utils::Read<uint64_t>(Utils::Read<uint64_t>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, GlobalSetting::battle::battle_speed);
-				}
-				else {
-					Utils::Write<float>(Utils::Read<uint64_t>(Utils::Read<uint64_t>(game_assembly + 0x8CAA6A0) + 0xC0) + 0x1DC, 1.f);
-				}
-
-				/* (RPG.GameCore.BattleInstance.IsStageForbidAutoBattle) */
-				if (GlobalSetting::battle::auto_battle_unlock) {
-					Utils::Write<uint32_t>(game_assembly + 0x5DA5F20, 0x90C3C031);
-				}
-				else {
-					Utils::Write<uint32_t>(game_assembly + 0x5DA5F20, 0x83485340);
-				}
-			}
-
-			if (GlobalSetting::other::fps_unlock) {
-				if (GlobalSetting::other::fps > 59) {
-					Utils::Write<uint32_t>(unity_player + 0x1C4E000, GlobalSetting::other::fps);
-				}
-			}
+			Sleep(500);
 		}
 	}
 

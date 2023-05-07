@@ -146,5 +146,8 @@
     <ClInclude Include="Utils.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

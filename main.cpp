@@ -46,9 +46,23 @@ namespace anti_cheat {
 	}
 }
 
+static HMODULE h_module = 0;
+
 void Setup()
 {
 	system("cls");
+
+	if (!Config::LoadConfig(h_module))
+	{
+		// first time user or invalid config
+		puts("[-] Failed to read config");
+		// create new config 
+		Config::SaveConfig();
+		Sleep(200);
+		// re-attempt load
+		if (!Config::LoadConfig(h_module))
+			return;
+	}
 
 	auto base_address = reinterpret_cast<uint64_t>(GetModuleHandleA("starrailbase.dll"));
 
@@ -84,20 +98,12 @@ void Setup()
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-	if (!Config::LoadConfig(hModule)) 
-	{
-		// first time user or invalid config
-		puts("[-] Failed to read config");
-		// create new config 
-		Config::SaveConfig(); 
-		Sleep(200);
-		// re-attempt load
-		if (!Config::LoadConfig(hModule))
-			return false;
-	}
+	
 
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
+		h_module = hModule;
+
 		AllocConsole();
 		freopen("CONOUT$", "w", stdout);
 		freopen("CONOUT$", "w", stderr);
