@@ -30,11 +30,6 @@
 
 #include "Dependencies/MinHook/MinHook.h"
 
-
-#define CLASS(assembly, namespaze, klass) static Il2CppClass* ThisClass() { return I2Hrame->GetClassEx(assembly, namespaze, klass); }
-#define MEMBER(klass, name, offset)  struct { char __pad__##name[offset]; klass name; }
-#define STATIC_MEMBER(klass, name, offset) static klass get_##name() { return *reinterpret_cast<klass*>(*reinterpret_cast<uintptr_t*>((uintptr_t)ThisClass() + 0xB8) + offset); } static void set_##name(klass value) { *reinterpret_cast<klass*>(*reinterpret_cast<uintptr_t*>((uintptr_t)ThisClass() + 0xB8) + offset) = value; }
-
 inline ID3D11Device* pDevice = NULL;
 inline ID3D11DeviceContext* pContext = NULL;
 inline ID3D11RenderTargetView* mainRenderTargetView = NULL;
