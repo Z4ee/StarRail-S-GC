@@ -60,7 +60,6 @@ namespace Cheat
 
 		/* (RPG.Client.GamePhaseManager.SetCurrentPhase) */
 		__int64 __fastcall h_setcurrentphase(__int64 a1, int a2, __int64 a3, char a4) {
-			printf("currect phase: %i\n", a2);
 			game::phase = a2;
 			return o_setcurrentphase(a1, a2, a3, a4);
 		}

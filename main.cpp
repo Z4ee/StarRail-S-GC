@@ -10,7 +10,7 @@ namespace anti_cheat {
 	HANDLE WINAPI h_CreateFileW(LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
 	{
 		if (memcmp(lpFileName, L"\\\\.\\ACE-BASE", 24) == 0) {
-			wprintf(L"Thread (%i) attempting to communicate with anti-cheat driver -> %s\n", GetCurrentThreadId(), lpFileName);
+			wprintf(L"[>] Thread (%i) attempting to communicate with anti-cheat driver -> %s\n", GetCurrentThreadId(), lpFileName);
 
 			SuspendThread(GetCurrentThread()); // 200iq bypass for memory protection
 		}
@@ -21,21 +21,21 @@ namespace anti_cheat {
 	void Setup(uint64_t srbase) {
 		if (MH_Initialize() != MH_OK)
 		{
-			puts("Error initializing MinHook library");
+			puts("[-] Failed to initialize MinHook library");
 
 			return;
 		}
 
 		if (MH_CreateHookApiEx(L"kernelbase", "CreateFileW", &anti_cheat::h_CreateFileW, reinterpret_cast<void**>(&p_CreateFileW), reinterpret_cast<void**>(&t_CreateFileW)) != MH_OK)
 		{
-			puts("Error creating hook for CreateFileW function");
+			puts("[-] Failed to create hook for CreateFileW function");
 
 			return;
 		}
 
 		if (MH_EnableHook(t_CreateFileW) != MH_OK)
 		{
-			puts("Error enabling hook for CreateFileW function");
+			puts("[-] Failed to enable hook for CreateFileW function");
 
 			return;
 		}
@@ -50,23 +50,18 @@ static HMODULE h_module = 0;
 
 void Setup()
 {
-	system("cls");
-
 	if (!Config::LoadConfig(h_module))
 	{
-		// first time user or invalid config
-		puts("[-] Failed to read config");
-		// create new config 
 		Config::SaveConfig();
 		Sleep(200);
-		// re-attempt load
-		if (!Config::LoadConfig(h_module))
+
+		if (!Config::LoadConfig(h_module)) {
+			puts("[!] Failed to create config file");
 			return;
+		}
 	}
 
 	auto base_address = reinterpret_cast<uint64_t>(GetModuleHandleA("starrailbase.dll"));
-
-	
 
 	if (Utils::GetTextSectionChecksum(base_address) != 0x1434A1A0) {
 
@@ -78,8 +73,6 @@ void Setup()
 	anti_cheat::Setup(base_address);
 
 	Sleep(15000);
-
-	
 
 	if (!Direct3D.Initialization())
 		puts("[-] Failed to setup Direct3D!");
