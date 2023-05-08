@@ -338,22 +338,24 @@ namespace Cheat
 			UpdateBattle(game_assembly, unity_player);
 			UpdateOther(unity_player);
 
-			if (GetAsyncKeyState(GlobalSetting::hotkeys::world_speed) & 1) {
+			HWND target_window = FindWindowA("UnityWndClass", nullptr);
+
+			if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::world_speed) & 1) {
 				GlobalSetting::world::speed_hack = !GlobalSetting::world::speed_hack;
 			}
-			else if (GetAsyncKeyState(GlobalSetting::hotkeys::battle_speed) & 1) {
+			else if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::battle_speed) & 1) {
 				GlobalSetting::battle::speed_hack = !GlobalSetting::battle::speed_hack;
 			}
-			else if (GetAsyncKeyState(GlobalSetting::hotkeys::auto_dialogue) & 1) {
+			else if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::auto_dialogue) & 1) {
 				GlobalSetting::world::auto_dialogue = !GlobalSetting::world::auto_dialogue;
 			}
-			else if (GetAsyncKeyState(GlobalSetting::hotkeys::invisibility) & 1) {
+			else if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::invisibility) & 1) {
 				GlobalSetting::world::invisibility = !GlobalSetting::world::invisibility;
 			}
-			else if (GetAsyncKeyState(GlobalSetting::hotkeys::force_auto_battle) & 1) {
+			else if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::force_auto_battle) & 1) {
 				GlobalSetting::battle::force_battle = !GlobalSetting::battle::force_battle;
 			}
-			else if (GetAsyncKeyState(GlobalSetting::hotkeys::peeking) & 1) {
+			else if (GetForegroundWindow() == target_window && GetAsyncKeyState(GlobalSetting::hotkeys::peeking) & 1) {
 				GlobalSetting::world::peeking = !GlobalSetting::world::peeking;
 			}
 
