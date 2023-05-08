@@ -24,27 +24,37 @@ namespace util
     }
 }
 
-bool InjectStandard(HANDLE hTarget, const char* dllpath)
+bool InjectStandard(HANDLE hTarget, const std::string& dllPath)
 {
     LPVOID loadlib = GetProcAddress(GetModuleHandle(L"kernel32"), "LoadLibraryA");
 
-    LPVOID dllPathAddr = VirtualAllocEx(hTarget, NULL, strlen(dllpath) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    if (dllPathAddr == NULL)
+    if (loadlib == nullptr)
+    {
+        std::cout << "Failed to get LoadLibraryA address. GetLastError(): " << GetLastError() << "\n";
+        return false;
+    }
+
+    LPVOID dllPathAddr = VirtualAllocEx(hTarget, NULL, dllPath.size() + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    
+    if (dllPathAddr == nullptr)
     {
         std::cout << "Failed allocating memory in the target process. GetLastError(): " << GetLastError() << "\n";
         return false;
     }
 
-    if (!WriteProcessMemory(hTarget, dllPathAddr, dllpath, strlen(dllpath) + 1, NULL))
+    if (!WriteProcessMemory(hTarget, dllPathAddr, dllPath.c_str(), dllPath.size() + 1, NULL))
     {
         std::cout << "Failed writing to process. GetLastError(): " << GetLastError() << "\n";
+        VirtualFreeEx(hTarget, dllPathAddr, 0, MEM_RELEASE); // Free memory on failure
         return false;
     }
 
     HANDLE hThread = CreateRemoteThread(hTarget, NULL, NULL, (LPTHREAD_START_ROUTINE)loadlib, dllPathAddr, NULL, NULL);
-    if (hThread == NULL)
+    
+    if (hThread == nullptr)
     {
         std::cout << "Failed to create a thread in the target process. GetLastError(): " << GetLastError() << "\n";
+        VirtualFreeEx(hTarget, dllPathAddr, 0, MEM_RELEASE); // Free memory on failure
         return false;
     }
 
@@ -63,6 +73,7 @@ bool InjectStandard(HANDLE hTarget, const char* dllpath)
     }
     return true;
 }
+
 
 std::optional<std::string> read_whole_file(const fs::path& file)
 try
@@ -108,46 +119,43 @@ int main()
     auto dll_path = current_dir.value() / "HSR-GC.dll";
     if (!fs::is_regular_file(dll_path))
     {
-        printf("DLL not found\n");
+        std::cout << "DLL not found" << std::endl;
         system("pause");
         return 0;
     }
+    
     std::string exe_path;
     auto settings_path = current_dir.value() / "settings.txt";
+
     if (!fs::is_regular_file(settings_path))
     {
         std::ofstream settings_file("settings.txt", std::ios_base::app);
-        if (settings_file.is_open()) {
-            settings_file << exe_path << std::endl;
-            settings_file.close();
+        if (!settings_file)
+        {
+            std::cout << "Error: Unable to create settings file." << std::endl;
+            return 1;
         }
-        else {
-            std::ofstream create_file("settings.txt");
-            if (create_file.is_open()) {
-                create_file << exe_path << std::endl;
-                create_file.close();
-            }
-            else {
-                std::cout << "Error: Unable to create settings file." << std::endl;
-                return 1;
-            }
-        }
+
+        settings_file << exe_path << std::endl;
+        settings_file.close();
         return 0;
     }
 
     auto settings = read_whole_file(settings_path);
     if (!settings)
     {
-        printf("Failed reading settings.txt\n");
+        std::cout << "Failed reading settings.txt" << std::endl;
         system("pause");
         return 0;
     }
 
     std::getline(std::stringstream(settings.value()), exe_path);
+
     if (!fs::is_regular_file(exe_path))
     {
         std::cout << "File path in settings.txt invalid" << std::endl;
         std::cout << "Please select your Game Executable" << std::endl;
+
         OPENFILENAMEA ofn{};
         char szFile[260]{};
         ZeroMemory(&ofn, sizeof(ofn));
@@ -161,43 +169,41 @@ int main()
         ofn.lpstrTitle = "Select Executable File";
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-        if (GetOpenFileNameA(&ofn))
+        if (!GetOpenFileNameA(&ofn))
         {
-            exe_path = ofn.lpstrFile;
-            std::ofstream settings_file("settings.txt", std::ios_base::out);
-            if (settings_file.is_open()) {
-                settings_file << exe_path << std::endl;
-                settings_file.close();
-            }
-            else {
-                std::cout << "Error: Unable to open settings file." << std::endl;
-                return 1;
-            }
-        }
-        else {
             std::cout << "Error: Unable to open file dialog." << std::endl;
             return 1;
         }
 
-        PROCESS_INFORMATION proc_info{};
-        STARTUPINFOA startup_info{};
-        CreateProcessA(exe_path.c_str(), NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &startup_info, &proc_info);
+        exe_path = ofn.lpstrFile;
 
-        InjectStandard(proc_info.hProcess, dll_path.string().c_str());
-        ResumeThread(proc_info.hThread);
-        CloseHandle(proc_info.hThread);
-        CloseHandle(proc_info.hProcess);
-        return 0;
+        std::ofstream settings_file("settings.txt", std::ios_base::out);
+        if (!settings_file)
+        {
+            std::cout << "Error: Unable to open settings file." << std::endl;
+            return 1;
+        }
+
+        settings_file << exe_path << std::endl;
+        settings_file.close();
     }
 
     PROCESS_INFORMATION proc_info{};
     STARTUPINFOA startup_info{};
     CreateProcessA(exe_path.c_str(), NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &startup_info, &proc_info);
 
-    InjectStandard(proc_info.hProcess, dll_path.string().c_str());
+    if (InjectStandard(proc_info.hProcess, dll_path.string()))
+    {
+        std::cout << "LoadLibrary Success!" << std::endl
+    }
+    else
+    {
+        std::cout << "LoadLibrary Failed!" << std::endl;
+    }
+
     ResumeThread(proc_info.hThread);
     CloseHandle(proc_info.hThread);
     CloseHandle(proc_info.hProcess);
-    std::cout << "LoadLibrary Success!" << std::endl;
+
     return 0;
 }
