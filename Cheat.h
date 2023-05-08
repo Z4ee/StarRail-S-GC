@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Config.h"
 
@@ -221,8 +221,7 @@ namespace Cheat
 		{
 			ImGui::Text("About this project");
 			ImGui::Text("This project was created by Z4ee");
-			ImGui::Text("This project is free,Not for sell");
-			ImGui::Text(u8"Õâ¸öÏîÄ¿ÊÇÃâ·Ñ¹«¿ªµÄÈç¹ûÄãÊÇÊÕ·Ñ»ñµÃµÄ´ËÏîÄ¿ÇëÉêÇëÍË¿î²¢ÆØ¹â³öÊÛËüµÄÈË");
+			ImGui::Text("This project is free, not for sell");
 			ImGui::Text("List of Contributing Developers");
 			ImGui::Text("Z4ee");
 			ImGui::Text("ky-ler");
