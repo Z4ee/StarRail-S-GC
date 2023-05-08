@@ -138,7 +138,6 @@ int main()
 
         settings_file << exe_path << std::endl;
         settings_file.close();
-        return 0;
     }
 
     auto settings = read_whole_file(settings_path);
@@ -194,7 +193,7 @@ int main()
 
     if (InjectStandard(proc_info.hProcess, dll_path.string()))
     {
-        std::cout << "LoadLibrary Success!" << std::endl
+        std::cout << "LoadLibrary Success!" << std::endl;
     }
     else
     {
