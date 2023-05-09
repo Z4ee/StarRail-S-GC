@@ -24,3 +24,6 @@ Step 7: Done!
 Open/Close menu on F1
 
 Auto-Dialogue on CAPSLOCK (if not automatically detected)
+
+# 09.05.23:
+project closed due to lack of time
